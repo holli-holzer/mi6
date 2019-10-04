@@ -121,6 +121,7 @@ sub test(@file, Bool :$verbose, Int :$jobs) {
             @file = <t xt>.grep({.IO.d});
         }
         my @command = "prove", "-e", $*EXECUTABLE, |@option, |@file;
+        @command.unshift( "cmd.exe", "/c" ) if $*DISTRO.is-win;
         note "==> Set PERL6LIB=%*ENV<PERL6LIB>";
         note "==> @command[]";
         my $proc = mi6run |@command;
