@@ -1,12 +1,20 @@
 unit module App::Mi6::Template;
 
-our sub template(:$module, :$module-file, :$dist, :$author, :$email, :$year) {
+our sub template(:$module, :$module-file, :$dist, :$author, :$cpanid, :$email, :$year) {
     my %template =
+
+Changes => qq:to/EOF/,
+Revision history for $dist
+
+\{\{\$NEXT\}\}
+    - Initial version
+EOF
+
 dist => qq:to/EOF/,
 name = $dist
 
 [ReadmeFromPod]
-; disable = true
+; enable = false
 filename = $module-file
 
 [PruneFiles]
@@ -35,7 +43,7 @@ install:
   - rakudobrew build zef
   - zef install --deps-only --/test .
 script:
-  - PERL6LIB=\$PWD/lib prove -e perl6 -vr t/
+  - PERL6LIB=\$PWD/lib prove -e perl6 -vr --ext .t --ext .t6 t
 sudo: false
 EOF
 
@@ -51,7 +59,7 @@ END_OF_TEST
 
 module => qq:to/EOD_OF_MODULE/,
 use v6.c;
-unit class $module\:ver<0.0.1>;
+unit class $module\:ver<0.0.1>{ $cpanid ?? ":auth<cpan:$cpanid>" !! ""};
 
 
 =begin pod
@@ -62,7 +70,11 @@ $module - blah blah blah
 
 =head1 SYNOPSIS
 
-  use $module;
+=begin code :lang<perl6>
+
+use $module;
+
+=end code
 
 =head1 DESCRIPTION
 
